@@ -18,8 +18,8 @@ export function FeaturesSectionWithHoverEffects() {
             icon: <IconHourglassHigh className="text-blue-600 dark:text-blue-400" />,
         },
         {
-            title: "Early Degradation Detection",
-            description: "Identify micro-failure patterns long before breakdown.",
+            title: "Precursor Probability",
+            description: "Calculates the statistical likelihood of failure precursors manifesting within the next operational cycle.",
             icon: <IconSearch className="text-purple-700 dark:text-purple-400" />,
         },
         {
