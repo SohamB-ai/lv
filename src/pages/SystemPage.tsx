@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Loader2, Zap } from "lucide-react";
@@ -12,6 +12,10 @@ import { MachineThinking } from "@/components/ui/machine-thinking";
 import { systemsManifest } from "@/data/systems-manifest";
 import { AssetIdentity } from "@/components/dashboard/AssetIdentity";
 import UnifiedIntelligenceDashboard from "@/components/dashboard/UnifiedIntelligenceDashboard";
+import { OperationModeInput } from "@/components/dashboard/OperationModeInput";
+import { OperationStateIndicator, OpState } from "@/components/dashboard/OperationStateIndicator";
+import { HumanObservationCard } from "@/components/dashboard/HumanObservationCard";
+import { Check, Play, Settings, Clock, Settings2, Wrench, Pause, Activity } from "lucide-react";
 
 interface PredictionResult {
   rul: number;
@@ -34,12 +38,63 @@ export default function SystemPage() {
   const systemProfile = systemsManifest[slug || ""] || systemsManifest["wind-turbines"];
   const [sensorValues, setSensorValues] = useState<Record<string, string>>({});
 
-  // Initialize default sensor values
-  if (Object.keys(sensorValues).length === 0 && systemProfile) {
-    const defaults: Record<string, string> = {};
-    systemProfile.sensors.forEach(s => defaults[s.id] = s.defaultValue || "");
-    setSensorValues(defaults);
-  }
+  // Operation Mode State
+  const [operationMode, setOperationMode] = useState("continuous");
+  const [shiftStart, setShiftStart] = useState("08:00");
+  const [shiftEnd, setShiftEnd] = useState("20:00");
+
+  // Operation State (Real-time simulation)
+  const [opState, setOpState] = useState<OpState>("RUNNING");
+  const [opReason, setOpReason] = useState("All systems normal");
+  const [opLastChange, setOpLastChange] = useState(new Date().toISOString());
+  const [opHistory, setOpHistory] = useState<{ state: OpState, timestamp: string, reason: string }[]>([]);
+
+  const changeOpState = (newState: OpState, reason: string) => {
+    if (newState === opState) return;
+    setOpHistory(prev => [{ state: opState, timestamp: opLastChange, reason: opReason }, ...prev]);
+    setOpState(newState);
+    setOpReason(reason);
+    setOpLastChange(new Date().toISOString());
+  };
+
+  // Human Observation State
+  const [humanObs, setHumanObs] = useState({
+    type: "",
+    typeOther: "",
+    severity: "",
+    location: "",
+    duration: "",
+    confidence: "",
+    context: [] as string[],
+    note: "",
+    photo: null as File | null,
+  });
+
+  const handleObsChange = (field: string, value: any) => {
+    setHumanObs(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Reset state when system changes
+  useEffect(() => {
+    if (systemProfile) {
+      const defaults: Record<string, string> = {};
+      systemProfile.sensors.forEach(s => defaults[s.id] = s.defaultValue || "");
+      setSensorValues(defaults);
+
+      // Reset human observation
+      setHumanObs({
+        type: "",
+        typeOther: "",
+        severity: "",
+        location: "",
+        duration: "",
+        confidence: "",
+        context: [],
+        note: "",
+        photo: null,
+      });
+    }
+  }, [slug, systemProfile]);
 
   if (!systemProfile) {
     return (
@@ -112,6 +167,21 @@ export default function SystemPage() {
           systemInfo: {
             id: slug,
             name: systemProfile.title,
+            operation_mode: operationMode,
+            shift_start: operationMode === "shift" ? shiftStart : undefined,
+            shift_end: operationMode === "shift" ? shiftEnd : undefined,
+            human_observation: humanObs.type ? {
+              type: humanObs.type === "other" ? humanObs.typeOther : humanObs.type,
+              severity: humanObs.severity,
+              location: humanObs.location,
+              duration: humanObs.duration,
+              confidence: humanObs.confidence,
+              context: humanObs.context,
+              note: humanObs.note,
+              photo_url: humanObs.photo ? URL.createObjectURL(humanObs.photo) : null,
+              reported_at: new Date().toISOString(),
+              reported_by: "Current Operator"
+            } : null
           }
         }
       });
@@ -146,8 +216,16 @@ export default function SystemPage() {
             <ArrowLeft className="h-5 w-5" />
           </button>
 
-          <div className="flex justify-center">
+          <div className="flex flex-col items-center justify-center gap-4">
             <AssetIdentity systemName={systemProfile.title} className="items-center text-center" />
+            <OperationStateIndicator
+              assetId={slug || "general"}
+              state={opState}
+              reason={opReason}
+              lastChange={opLastChange}
+              history={opHistory}
+              riskLevel={45} // Example risk level
+            />
           </div>
         </div>
 
@@ -167,6 +245,17 @@ export default function SystemPage() {
               </CardHeader>
 
               <CardContent className="relative z-10 space-y-6">
+                <OperationModeInput
+                  domain={slug || "general"}
+                  operationMode={operationMode}
+                  onModeChange={setOperationMode}
+                  shiftStart={shiftStart}
+                  onShiftStartChange={setShiftStart}
+                  shiftEnd={shiftEnd}
+                  onShiftEndChange={setShiftEnd}
+                  className="mb-8"
+                />
+
                 <div className="grid gap-5">
                   {systemProfile.sensors.map((sensor) => (
                     <SensorInput
@@ -183,6 +272,13 @@ export default function SystemPage() {
                   ))}
                 </div>
 
+                <HumanObservationCard
+                  domain={slug || "general"}
+                  observation={humanObs}
+                  onChange={handleObsChange}
+                  className="mt-8"
+                />
+
                 <Button
                   id="runPredictBtn"
                   onClick={handleRunPrediction}
@@ -198,38 +294,83 @@ export default function SystemPage() {
                     "Run Health Prediction"
                   )}
                 </Button>
+
+                {/* Simulation Tools for Hackathon */}
+                <div className="mt-8 pt-6 border-t border-border/50">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Settings className="w-3.5 h-3.5 text-muted-foreground" />
+                    <span className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Hackathon Demo Tools</span>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {[
+                      { id: "continuous", label: "Continuous", icon: Play },
+                      { id: "shift", label: "Shift", icon: Clock },
+                      { id: "intermittent", label: "Intermittent", icon: Zap },
+                      { id: "manual", label: "Manual", icon: Settings2 },
+                    ].map((mode) => (
+                      <button
+                        key={mode.id}
+                        id={`btn-sim-mode-${mode.id}`}
+                        onClick={() => setOperationMode(mode.id)}
+                        className={`flex flex-col items-center justify-center p-2 rounded-lg border transition-all duration-300 ${operationMode === mode.id
+                          ? "bg-primary/20 border-primary text-primary shadow-[0_0_15px_rgba(139,75,255,0.2)]"
+                          : "bg-background/20 border-border/40 text-muted-foreground hover:border-border hover:bg-background/40"
+                          }`}
+                      >
+                        <mode.icon className="w-4 h-4 mb-1" />
+                        <span className="text-[10px] font-medium">{mode.label}</span>
+                        {operationMode === mode.id && (
+                          <motion.div layoutId="active-tick" className="absolute top-1 right-1">
+                            <Check className="w-2 h-2" />
+                          </motion.div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* State Simulation Tools */}
+                <div className="mt-4 pt-4 border-t border-border/30">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Activity className="w-3.5 h-3.5 text-muted-foreground" />
+                    <span className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">State Simulation</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      id="dev-force-running"
+                      size="sm"
+                      variant="outline"
+                      className={`flex-1 h-8 text-[10px] gap-1.5 ${opState === 'RUNNING' ? 'bg-cyan-500/10 border-cyan-500/50 text-cyan-500' : ''}`}
+                      onClick={() => changeOpState("RUNNING", "Manual override: Start cycle")}
+                    >
+                      <Play className="w-3 h-3" /> Running
+                    </Button>
+                    <Button
+                      id="dev-force-idle"
+                      size="sm"
+                      variant="outline"
+                      className={`flex-1 h-8 text-[10px] gap-1.5 ${opState === 'IDLE' ? 'bg-muted border-muted-foreground/50 text-muted-foreground' : ''}`}
+                      onClick={() => changeOpState("IDLE", "Manual override: Pause cycle")}
+                    >
+                      <Pause className="w-3 h-3" /> Idle
+                    </Button>
+                    <Button
+                      id="dev-force-maint"
+                      size="sm"
+                      variant="outline"
+                      className={`flex-1 h-8 text-[10px] gap-1.5 ${opState === 'MAINTENANCE' ? 'bg-amber-500/10 border-amber-500/50 text-amber-500' : ''}`}
+                      onClick={() => changeOpState("MAINTENANCE", "Manual override: Maintenance mode")}
+                    >
+                      <Wrench className="w-3 h-3" /> Maint
+                    </Button>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
 
         </div>
 
-        {/* Intelligence Preview Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1, delay: 0.5 }}
-          className="px-6 md:px-12 pb-24 max-w-7xl mx-auto w-full"
-        >
-          <div className="flex flex-col items-center mb-6">
-            <div className="h-px w-24 bg-gradient-to-r from-transparent via-primary/50 to-transparent mb-8" />
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10 text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-4">
-              <Zap className="w-3 h-3" />
-              <span>System Intelligence Layout</span>
-            </div>
-            <h3 className="text-2xl md:text-3xl font-bold text-foreground text-center">
-              Enterprise Dashboard Preview
-            </h3>
-            <p className="text-muted-foreground text-sm mt-2 text-center max-w-lg">
-              Below is the intelligence matrix structure that will be generated for the {systemProfile.title}.
-            </p>
-          </div>
-
-          <div className="bg-card/30 backdrop-blur-md border border-border rounded-[2rem] overflow-hidden shadow-2xl relative">
-            <UnifiedIntelligenceDashboard systemId={slug || ""} isPreview={true} />
-          </div>
-        </motion.div>
       </div>
     </div>
   );

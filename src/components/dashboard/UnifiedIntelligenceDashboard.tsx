@@ -4,7 +4,8 @@ import {
     Clock, CheckCircle2, TrendingUp, TrendingDown,
     ShieldAlert, Brain, Database, BarChart3,
     MessageSquare, Download, MapPin, Cpu, History,
-    AlertOctagon, Info, Sparkles, RefreshCcw, LayoutGrid
+    AlertOctagon, Info, Sparkles, RefreshCcw, LayoutGrid,
+    Eye, AlertCircle
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,13 @@ import { SystemProfile, systemsManifest } from "@/data/systems-manifest";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-export default function UnifiedIntelligenceDashboard({ result, inputValues, systemId, isPreview }: { result?: any, inputValues?: any, systemId: string, isPreview?: boolean }) {
+export default function UnifiedIntelligenceDashboard({ result, inputValues, systemId, isPreview, humanObservation }: {
+    result?: any,
+    inputValues?: any,
+    systemId: string,
+    isPreview?: boolean,
+    humanObservation?: any
+}) {
     const systemProfile = systemsManifest[systemId];
 
     // Fallback if system not found
@@ -268,6 +275,24 @@ export default function UnifiedIntelligenceDashboard({ result, inputValues, syst
                                             </div>
                                         </div>
                                     ))}
+
+                                    {/* Human Contribution */}
+                                    {humanObservation && (
+                                        <div className="flex items-center gap-4 pt-2 border-t border-primary/10 mt-2">
+                                            <div className="w-24 text-[12px] font-black text-primary truncate">HUMAN SIGNAL</div>
+                                            <div className="flex-1 bg-primary/10 h-2 rounded-full overflow-hidden relative">
+                                                <motion.div
+                                                    initial={{ width: 0 }}
+                                                    animate={{ width: "66%" }}
+                                                    className="h-full bg-primary"
+                                                />
+                                            </div>
+                                            <div className="text-[11px] font-black w-10 flex items-center gap-1 justify-end text-primary">
+                                                <AlertCircle className="w-3 h-3" />
+                                                66%
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -363,7 +388,58 @@ export default function UnifiedIntelligenceDashboard({ result, inputValues, syst
                 </div>
             </div>
 
-            {/* 7️⃣ & 8️⃣ ALERT & FEEDBACK */}
+            {/* 7️⃣ HUMAN OBSERVATION REPORT */}
+            {humanObservation && (
+                <div className="grid grid-cols-1 gap-6">
+                    <Card className="p-6 bg-primary/5 border-primary/20 backdrop-blur-sm relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <Eye className="w-16 h-16" />
+                        </div>
+                        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
+                            <div className="flex items-center gap-4">
+                                <div className="p-4 rounded-2xl bg-primary/20 text-primary border border-primary/30">
+                                    <MessageSquare className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-black text-foreground uppercase tracking-tight flex items-center gap-2">
+                                        Operator Observation: {humanObservation.type}
+                                        <span className={cn("text-[10px] px-2 py-0.5 rounded border ml-2",
+                                            humanObservation.severity === 'severe' ? "bg-red-500/10 border-red-500/30 text-red-500" : "bg-primary/10 border-primary/30 text-primary")}>
+                                            {humanObservation.severity?.toUpperCase()}
+                                        </span>
+                                    </h4>
+                                    <p className="text-[12px] text-muted-foreground font-bold uppercase tracking-widest mt-1">
+                                        Location: {humanObservation.location} — Reported at {new Date(humanObservation.reported_at).toLocaleTimeString()}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-6">
+                                <div className="text-right">
+                                    <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Confidence</div>
+                                    <div className="text-lg font-black text-primary">{humanObservation.confidence?.toUpperCase()}</div>
+                                </div>
+                                {humanObservation.photo_url && (
+                                    <div className="w-16 h-16 rounded-xl border border-primary/30 overflow-hidden shadow-lg hover:scale-105 transition-transform cursor-pointer">
+                                        <img src={humanObservation.photo_url} alt="Observation" className="w-full h-full object-cover" />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        <div className="mt-6 p-4 bg-foreground/5 border border-foreground/10 rounded-2xl italic text-sm text-foreground/80">
+                            "{humanObservation.note || "No additional notes provided."}"
+                        </div>
+
+                        {/* Risk Impact Visualization */}
+                        <div className="mt-4 flex items-center gap-3 text-[11px] font-black uppercase tracking-widest text-primary/80">
+                            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+                            <span>Risk Adjusted +12% based on human signal (Weight: 0.66)</span>
+                            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+                        </div>
+                    </Card>
+                </div>
+            )}
+
+            {/* 8️⃣ & 9️⃣ ALERT & FEEDBACK */}
             <div className="grid grid-cols-1 gap-6 pb-6">
                 <Card className="p-6 bg-red-500/5 border-red-500/20 backdrop-blur-sm group hover:bg-red-500/10 transition-colors">
                     <div className="flex items-center gap-4 mb-4">

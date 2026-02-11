@@ -217,6 +217,7 @@ export default function OutputPreview() {
                             result={result}
                             inputValues={location.state?.inputs}
                             systemId={systemInfo.id}
+                            humanObservation={systemInfo?.human_observation}
                         />
                     </motion.div>
 

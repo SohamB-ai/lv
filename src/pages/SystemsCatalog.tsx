@@ -377,6 +377,20 @@ export default function SystemsCatalog() {
               </DialogContent>
             </Dialog>
           )}
+
+          {/* Quick Access Quick Links */}
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 mt-12 max-w-4xl px-10">
+            {localSystemCards.map((card) => (
+              <button
+                key={card.id}
+                onClick={() => card.href && navigate(card.href)}
+                className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground hover:text-[#8B4BFF] transition-all relative group"
+              >
+                {card.title}
+                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#8B4BFF] group-hover:w-full transition-all duration-300" />
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

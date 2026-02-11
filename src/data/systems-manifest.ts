@@ -1,4 +1,4 @@
-import { LucideIcon, Zap, Wind, Cog, Battery, Ruler, Activity, Server, Droplets, Workflow, Microscope, Laptop } from "lucide-react";
+import { LucideIcon, Zap, Wind, Cog, Battery, Ruler, Activity, Server, Droplets, Workflow, Microscope, Laptop, Sun, Network, Bot, Car, Plane, Train, Stethoscope, Fan, Drill, Building2, Cpu, Gauge } from "lucide-react";
 
 export type RiskLevel = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 
@@ -499,8 +499,8 @@ export const systemsManifest: Record<string, SystemProfile> = {
         economics: { potentialCost: "Environmental Spill", downtimeCost: "$150,000 / hr" },
         defaultDecision: { action: "Emergency Valve Shutoff & Inspection", why: ["Leak probability > 99%"], consequences: [{ text: "Spill Volume", impact: "Escalating" }] }
     },
-    "semiconductor-tools": {
-        id: "semiconductor-tools",
+    "lithography": {
+        id: "lithography",
         title: "Lithography Scanner",
         icon: Microscope,
         description: "Nanofabrication Tool",
@@ -514,6 +514,251 @@ export const systemsManifest: Record<string, SystemProfile> = {
         failureCluster: { id: "CL-SEMI", label: "Optics Drift", description: "Matches normal wear trajectory." },
         economics: { potentialCost: "$500,000 (Yield)", downtimeCost: "$20,000 / hr" },
         defaultDecision: { action: "Recalibration & Optics Cleaning", why: ["Yield impact risk"], consequences: [{ text: "Wafer Scrap", impact: "High" }] }
+    },
+    "solar-inverters": {
+        id: "solar-inverters",
+        title: "Solar Inverter",
+        icon: Sun,
+        description: "Renewable Convergence Unit",
+        location: "Solar Farm West, Arizona",
+        digitalIdentity: { age: "3 Years", regime: "Daylight Peak", model: "PV-Conv-v5", lastMaintenance: "6 Months Ago" },
+        sensors: [
+            { id: "dcVoltage", label: "DC Input Voltage", unit: "V", placeholder: "200-1000", defaultValue: "720" },
+            { id: "acCurrent", label: "AC Output Current", unit: "A", placeholder: "0-500", defaultValue: "380" },
+            { id: "temp", label: "IGBT Temperature", unit: "°C", placeholder: "30-100", defaultValue: "65" },
+            { id: "efficiency", label: "Conversion Efficiency", unit: "%", placeholder: "90-99", defaultValue: "97.5" }
+        ],
+        cognitiveTimeline: [{ time: "Now", description: "Thermal ripple detected in IGBT bank", type: "warning" }],
+        degradationDrivers: [{ factor: "IGBT Temp", direction: "up", impact: "strong" }],
+        precursor: { probability: 0.58, status: "Detected", explanation: "High-frequency switching noise suggests imminent capacitor failure." },
+        dataDrift: { detected: false, severity: "Low", explanation: "Irradiance matches historical profile." },
+        failureCluster: { id: "CL-PV-1", label: "Capacitor Aging", description: "Filter capacitor end-of-life profile." },
+        economics: { potentialCost: "$8,000", downtimeCost: "$400 / hr (Lost Gen)" },
+        defaultDecision: { action: "Inspect Capacitor Bank & Heat Sink", why: ["Switching efficiency loss"], consequences: [{ text: "Total Inverter Failure", impact: "Moderate" }] }
+    },
+    "power-generators": {
+        id: "power-generators",
+        title: "Industrial Generator",
+        icon: Activity,
+        description: "Backup Power System",
+        location: "Facility Site C, Texas",
+        digitalIdentity: { age: "5 Years", regime: "Emergency Standby", model: "Gen-Shield-X1", lastMaintenance: "3 Months Ago" },
+        sensors: [
+            { id: "oilPress", label: "Oil Pressure", unit: "PSI", placeholder: "20-80", defaultValue: "55" },
+            { id: "coolantTemp", label: "Coolant Temp", unit: "°C", placeholder: "40-100", defaultValue: "82" },
+            { id: "outputPower", label: "Output Power", unit: "kW", placeholder: "0-1000", defaultValue: "850" },
+            { id: "freq", label: "Frequency", unit: "Hz", placeholder: "59-61", defaultValue: "60.1" }
+        ],
+        cognitiveTimeline: [{ time: "Now", description: "Frequency oscillation detected", type: "warning" }],
+        degradationDrivers: [{ factor: "Oil Pressure", direction: "down", impact: "moderate" }],
+        precursor: { probability: 0.35, status: "Not Detected", explanation: "Engine health baseline stable." },
+        dataDrift: { detected: false, severity: "Low", explanation: "Load profile matches history." },
+        failureCluster: { id: "CL-GEN", label: "Governor Instability", description: "Occasions of speed hunting." },
+        economics: { potentialCost: "$25,000", downtimeCost: "Operation at Risk" },
+        defaultDecision: { action: "Governor Tuning & Oil Change", why: ["Speed control drift"], consequences: [{ text: "Power Quality Issue", impact: "High" }] }
+    },
+    "smart-grid": {
+        id: "smart-grid",
+        title: "Smart Grid Controller",
+        icon: Network,
+        description: "Network Stability Node",
+        location: "Node 42, San Jose",
+        digitalIdentity: { age: "2 Years", regime: "Continuous Balancing", model: "Grid-IQ-v2", lastMaintenance: "1 Month Ago" },
+        sensors: [
+            { id: "voltage", label: "Bus Voltage", unit: "kV", placeholder: "10-15", defaultValue: "12.4" },
+            { id: "thd", label: "Total Harmonic Dist", unit: "%", placeholder: "0-5", defaultValue: "1.2" },
+            { id: "temp", label: "Internal Node Temp", unit: "°C", placeholder: "20-80", defaultValue: "42" }
+        ],
+        cognitiveTimeline: [{ time: "Now", description: "Harmonic peak at 3rd order", type: "inference" }],
+        degradationDrivers: [{ factor: "THD", direction: "up", impact: "moderate" }],
+        precursor: { probability: 0.25, status: "Not Detected", explanation: "Grid parameters within safety envelope." },
+        dataDrift: { detected: true, severity: "Low", explanation: "Inverter-heavy load signature shift." },
+        failureCluster: { id: "CL-GRID", label: "Transient Peak", description: "Non-critical harmonic drift." },
+        economics: { potentialCost: "Hardware Lifecycle Impact", downtimeCost: "Grid Stability Risk" },
+        defaultDecision: { action: "Update Filtering Parameters", why: ["Inverter noise compensation"], consequences: [{ text: "Efficiency Gain", impact: "2%" }] }
+    },
+    "pumps": {
+        id: "pumps",
+        title: "Industrial Pump",
+        icon: Droplets,
+        description: "Fluid Transport System",
+        location: "Water Plant, Seattle",
+        digitalIdentity: { age: "7 Years", regime: "Constant Flow", model: "Pump-Pro-v3", lastMaintenance: "4 Months Ago" },
+        sensors: [
+            { id: "suction", label: "Suction Pressure", unit: "PSI", placeholder: "0-100", defaultValue: "15" },
+            { id: "discharge", label: "Discharge Pressure", unit: "PSI", placeholder: "50-500", defaultValue: "120" },
+            { id: "flow", label: "Flow Rate", unit: "GPM", placeholder: "0-2000", defaultValue: "1450" },
+            { id: "vib", label: "Vibration", unit: "mm/s", placeholder: "0-20", defaultValue: "6.2" }
+        ],
+        cognitiveTimeline: [{ time: "Now", description: "Cavitation signature identified", type: "critical" }],
+        degradationDrivers: [{ factor: "Vibration", direction: "up", impact: "strong" }],
+        precursor: { probability: 0.92, status: "Detected", explanation: "Acoustic spikes match impeller cavitation pattern." },
+        dataDrift: { detected: false, severity: "Low", explanation: "Fluid viscosity within range." },
+        failureCluster: { id: "CL-PUMP", label: "Impeller Damage", description: "Consistent with low NPSH events." },
+        economics: { potentialCost: "$12,000", downtimeCost: "$2,500 / hr" },
+        defaultDecision: { action: "Check Suction Line & Inspect Impeller", why: ["Cavitation levels > threshold"], consequences: [{ text: "Total Pump Seizure", impact: "Critical" }] }
+    },
+    "industrial-robots": {
+        id: "industrial-robots",
+        title: "Industrial Robot",
+        icon: Bot,
+        description: "Automation Arm",
+        location: "Line 2, Gigafactory",
+        digitalIdentity: { age: "3 Years", regime: "High Precision Pathing", model: "Bot-Arm-XG", lastMaintenance: "2 Weeks Ago" },
+        sensors: [
+            { id: "joint1Temp", label: "Joint 1 Temp", unit: "°C", placeholder: "20-90", defaultValue: "55" },
+            { id: "torque", label: "Motor Torque", unit: "Nm", placeholder: "0-100", defaultValue: "42" },
+            { id: "error", label: "Positional Error", unit: "mm", placeholder: "0-2", defaultValue: "0.05" }
+        ],
+        cognitiveTimeline: [{ time: "Now", description: "Torque deviation on Joint 3", type: "warning" }],
+        degradationDrivers: [{ factor: "Positional Error", direction: "up", impact: "moderate" }],
+        precursor: { probability: 0.65, status: "Detected", explanation: "Joint friction tracking gearbox wear profile." },
+        dataDrift: { detected: false, severity: "Low", explanation: "Payload weight stable." },
+        failureCluster: { id: "CL-BOT", label: "Joint Friction", description: "Belt tension or lubrication issue." },
+        economics: { potentialCost: "$18,000", downtimeCost: "$15,000 / hr (Line Stop)" },
+        defaultDecision: { action: "Joint Lubrication & Re-calibration", why: ["Torque spike in Link 3"], consequences: [{ text: "Production Outage", impact: "High" }] }
+    },
+    "vehicle-engines": {
+        id: "vehicle-engines",
+        title: "Fleet Vehicle Engine",
+        icon: Car,
+        description: "Internal Combustion Unit",
+        location: "Logistics Hub, Denver",
+        digitalIdentity: { age: "4 Years", regime: "Stop-and-Go", model: "Engine-IC-v4", lastMaintenance: "5,000 Miles Ago" },
+        sensors: [
+            { id: "rpm", label: "RPM", unit: "rpm", placeholder: "600-6000", defaultValue: "2200" },
+            { id: "oilTemp", label: "Oil Temperature", unit: "°C", placeholder: "60-120", defaultValue: "95" },
+            { id: "fuelPress", label: "Fuel Pressure", unit: "PSI", placeholder: "30-80", defaultValue: "45" }
+        ],
+        cognitiveTimeline: [{ time: "Now", description: "Fuel trim deviation detected", type: "inference" }],
+        degradationDrivers: [{ factor: "Oil Temp", direction: "up", impact: "moderate" }],
+        precursor: { probability: 0.42, status: "Not Detected", explanation: "Spark-ignition cycle stable." },
+        dataDrift: { detected: false, severity: "Low", explanation: "Idle duration consistent." },
+        failureCluster: { id: "CL-ENG", label: "Injectors Aging", description: "Slight fuel-air ratio drift." },
+        economics: { potentialCost: "$4,500", downtimeCost: "Fleet Availability Loss" },
+        defaultDecision: { action: "Fuel Injector Cleaning & Oil Analysis", why: ["Long-term fuel trim > 10%"], consequences: [{ text: "Emissions Failure", impact: "Likely" }] }
+    },
+    "ev-batteries": {
+        id: "ev-batteries",
+        title: "EV Battery Pack",
+        icon: Battery,
+        description: "Energy Storage System",
+        location: "Fleet Unit 808",
+        digitalIdentity: { age: "2 Years", regime: "Rapid Charging", model: "Li-Cell-Gen3", lastMaintenance: "Daily Telemetry" },
+        sensors: [
+            { id: "soh", label: "State of Health", unit: "%", placeholder: "0-100", defaultValue: "94" },
+            { id: "voltsMax", label: "Cell Voltage Max", unit: "V", placeholder: "3.2-4.2", defaultValue: "4.15" },
+            { id: "packTemp", label: "Pack Temperature", unit: "°C", placeholder: "10-60", defaultValue: "35" }
+        ],
+        cognitiveTimeline: [{ time: "Now", description: "Charge cycle resistance increased", type: "warning" }],
+        degradationDrivers: [{ factor: "Pack Temp", direction: "up", impact: "strong" }],
+        precursor: { probability: 0.68, status: "Detected", explanation: "Dendrite growth signature detected via impedance spectroscopy." },
+        dataDrift: { detected: false, severity: "Low", explanation: "Climate effects within bounds." },
+        failureCluster: { id: "CL-BATT", label: "Capacity Fade", description: "Internal resistance rise profile." },
+        economics: { potentialCost: "$12,000", downtimeCost: "Critical Failure Risk" },
+        defaultDecision: { action: "Limit Fast Charge & Coolant Check", why: ["Resistance rise in Module 4"], consequences: [{ text: "Range Reduction", impact: "Significant" }] }
+    },
+    "jet-engines": {
+        id: "jet-engines",
+        title: "Jet Engine (Turbofan)",
+        icon: Plane,
+        description: "Main Propulsion Unit",
+        location: "System ID: N142-FE",
+        digitalIdentity: { age: "12 Years", regime: "Transcontinental", model: "GE-Next-X", lastMaintenance: "200 Flight Hours Ago" },
+        sensors: [
+            { id: "egt", label: "Exhaust Gas Temp", unit: "°C", placeholder: "400-950", defaultValue: "620" },
+            { id: "n1", label: "Fan Speed (N1)", unit: "%", placeholder: "0-110", defaultValue: "88" },
+            { id: "oilPress", label: "Oil Pressure", unit: "PSI", placeholder: "10-100", defaultValue: "45" },
+            { id: "fuelFlow", label: "Fuel Flow", unit: "lb/hr", placeholder: "500-10000", defaultValue: "4200" }
+        ],
+        cognitiveTimeline: [{ time: "Now", description: "EGT Margin reduced", type: "warning" }],
+        degradationDrivers: [{ factor: "EGT", direction: "up", impact: "strong" }],
+        precursor: { probability: 0.72, status: "Detected", explanation: "Blade erosion spectral shift detected during takeoff power." },
+        dataDrift: { detected: false, severity: "Low", explanation: "Ambient altitude data normalized." },
+        failureCluster: { id: "CL-JET", label: "Turbine Blade Wear", description: "Consistent with thermal fatigue." },
+        economics: { potentialCost: "$2.5M (Overhaul)", downtimeCost: "AOG (Aircraft on Ground)" },
+        defaultDecision: { action: "Borescope Inspection & Blade Wash", why: ["EGT margin < threshold"], consequences: [{ text: "Engine Surge Risk", impact: "Moderate" }] }
+    },
+    "traction-motors": {
+        id: "traction-motors",
+        title: "Railway Traction Motor",
+        icon: Train,
+        description: "Locomotive Propulsion Driver",
+        location: "Unit 342, EuroRail",
+        digitalIdentity: { age: "8 Years", regime: "Mountainous Haul", model: "Rail-Drive-v4", lastMaintenance: "6 Months Ago" },
+        sensors: [
+            { id: "windingTemp", label: "Winding Temp", unit: "°C", placeholder: "20-180", defaultValue: "115" },
+            { id: "current", label: "Phase Current", unit: "A", placeholder: "0-1200", defaultValue: "850" },
+            { id: "bearingTemp", label: "Bearing Temp", unit: "°C", placeholder: "20-120", defaultValue: "72" }
+        ],
+        cognitiveTimeline: [{ time: "Now", description: "Flashover precursor detected", type: "warning" }],
+        degradationDrivers: [{ factor: "Winding Temp", direction: "up", impact: "strong" }],
+        precursor: { probability: 0.81, status: "Detected", explanation: "Current leakage spikes correlate with insulation moisture ingress." },
+        dataDrift: { detected: false, severity: "Low", explanation: "Track profile stable." },
+        failureCluster: { id: "CL-RAIL", label: "Insulation Leakage", description: "Matches high-humidity run failure." },
+        economics: { potentialCost: "$45,000", downtimeCost: "Track Blocking Event" },
+        defaultDecision: { action: "Clean Commutator & Blowout Dust", why: ["Leakage current > 5mA"], consequences: [{ text: "Motor Flashover", impact: "High" }] }
+    },
+    "ventilators": {
+        id: "ventilators",
+        title: "Medical Ventilator",
+        icon: Stethoscope,
+        description: "Life-Support System",
+        location: "Bed 4, ICU West",
+        digitalIdentity: { age: "3 Years", regime: "Continuous Care", model: "Life-Breathe-9", lastMaintenance: "1 Month Ago" },
+        sensors: [
+            { id: "tidalVol", label: "Tidal Volume", unit: "mL", placeholder: "200-800", defaultValue: "450" },
+            { id: "peakPress", label: "Peak Airway Press", unit: "cmH2O", placeholder: "10-40", defaultValue: "28" },
+            { id: "o2Conc", label: "O2 Concentration", unit: "%", placeholder: "21-100", defaultValue: "40" }
+        ],
+        cognitiveTimeline: [{ time: "Now", description: "Valve timing drift detected", type: "warning" }],
+        degradationDrivers: [{ factor: "Peak Airway Press", direction: "up", impact: "moderate" }],
+        precursor: { probability: 0.48, status: "Not Detected", explanation: "Patient compliance stable, monitoring mechanical drift." },
+        dataDrift: { detected: false, severity: "Low", explanation: "Gas supply pressure stable." },
+        failureCluster: { id: "CL-VENT", label: "Exhalation Valve Wear", description: "Mechanical timing offset profile." },
+        economics: { potentialCost: "Hardware Lifecycle", downtimeCost: "Critical Care Availability" },
+        defaultDecision: { action: "Calibrate Sensors & Inspect Valve", why: ["Flow sensor drift identified"], consequences: [{ text: "Asynchronous Ventilation", impact: "Moderate" }] }
+    },
+    "cooling-systems": {
+        id: "cooling-systems",
+        title: "Data Center Cooling Unit",
+        icon: Fan,
+        description: "Chilled Water Loop",
+        location: "Floor 2, Rack 10-15",
+        digitalIdentity: { age: "5 Years", regime: "Peak PUE Target", model: "Cool-Flow-v9", lastMaintenance: "2 Months Ago" },
+        sensors: [
+            { id: "fanVib", label: "Fan Vibration", unit: "Hz", placeholder: "0-60", defaultValue: "12" },
+            { id: "inletTemp", label: "Inlet Chilled Water", unit: "°C", placeholder: "5-20", defaultValue: "7.2" },
+            { id: "outletTemp", label: "Outlet Temp", unit: "°C", placeholder: "10-30", defaultValue: "14.5" }
+        ],
+        cognitiveTimeline: [{ time: "Now", description: "Delta-T efficiency drop", type: "warning" }],
+        degradationDrivers: [{ factor: "Inlet Temp", direction: "up", impact: "moderate" }],
+        precursor: { probability: 0.54, status: "Detected", explanation: "Thermal transfer curve suggests sediment build-up in heat exchanger." },
+        dataDrift: { detected: false, severity: "Low", explanation: "Server heat load consistent." },
+        failureCluster: { id: "CL-COOL", label: "Scale Accumulation", description: "Typical mineral deposit profile." },
+        economics: { potentialCost: "$5,000", downtimeCost: "PUE Penalty / HW Risk" },
+        defaultDecision: { action: "Chemical Flush & Fan Balancing", why: ["Coefficient of performance < 3.2"], consequences: [{ text: "Server Hotspot Risk", impact: "High" }] }
+    },
+    "drilling-equipment": {
+        id: "drilling-equipment",
+        title: "Offshore Drilling Rig",
+        icon: Drill,
+        description: "Heavy Extraction Unit",
+        location: "Deepwater Horizon Site 2",
+        digitalIdentity: { age: "14 Years", regime: "Deep-Sea Rock", model: "Drill-Max-Pro", lastMaintenance: "6 Months Ago" },
+        sensors: [
+            { id: "wob", label: "Weight on Bit", unit: "klb", placeholder: "0-100", defaultValue: "45" },
+            { id: "torque", label: "Drill Torque", unit: "kNm", placeholder: "0-50", defaultValue: "28" },
+            { id: "rop", label: "Rate of Penetration", unit: "ft/hr", placeholder: "0-200", defaultValue: "65" },
+            { id: "pumpPress", label: "Mud Pump Pressure", unit: "PSI", placeholder: "0-5000", defaultValue: "3200" }
+        ],
+        cognitiveTimeline: [{ time: "Now", description: "Drill string vibration peak", type: "critical" }],
+        degradationDrivers: [{ factor: "ROP", direction: "down", impact: "strong" }],
+        precursor: { probability: 0.88, status: "Detected", explanation: "Torsional resonance pattern matches bit-balling or severe tooth wear." },
+        dataDrift: { detected: false, severity: "Low", explanation: "Rock hardness data within history." },
+        failureCluster: { id: "CL-DRILL", label: "Bit Failure", description: "Mechanical tooth breakage signature." },
+        economics: { potentialCost: "$150,000 (Trip Time)", downtimeCost: "$12,000 / hr" },
+        defaultDecision: { action: "Pull Out of Hole (POOH) & Replace Bit", why: ["Torque spikes > 2 std dev"], consequences: [{ text: "Twist-Off Risk", impact: "Critical" }] }
     }
 };
 
