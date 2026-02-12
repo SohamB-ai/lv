@@ -100,7 +100,9 @@ export default function UnifiedIntelligenceDashboard({ result, inputValues, syst
                 <Card className="p-6 bg-card/30 dark:bg-white/[0.03] border-border dark:border-white/10 relative overflow-hidden group">
                     <div className="text-muted-foreground text-[12px] uppercase tracking-[0.2em] mb-4 font-black">Remaining Useful Life</div>
                     <div className="flex items-baseline gap-2 mb-2">
-                        <span className="text-5xl font-black text-foreground">{stats.rul}</span>
+                        <span className="text-4xl md:text-5xl font-black text-foreground">
+                            {Math.max(0, stats.rul - 12)} — {stats.rul + 12}
+                        </span>
                         <span className="text-lg text-muted-foreground/60 font-bold uppercase tracking-widest">{stats.rulUnit}</span>
                     </div>
                     <div className="flex items-center gap-2 text-[12px] text-muted-foreground font-medium mb-4 italic">
@@ -108,7 +110,7 @@ export default function UnifiedIntelligenceDashboard({ result, inputValues, syst
                         Confidence Band: +/- 12 {stats.rulUnit}
                     </div>
                     <p className="text-[12px] text-muted-foreground uppercase tracking-[0.1em] leading-relaxed">
-                        Estimated time before failure under current conditions.
+                        A cycle is not an event — it is a unit of damage. Instead of counting how many times the machine ran, we count how much life it consumed.
                     </p>
                     <Clock className="absolute bottom-4 right-4 w-12 h-12 text-foreground/5 -rotate-12 group-hover:rotate-0 transition-transform duration-500" />
                 </Card>

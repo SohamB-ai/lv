@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Loader2, Zap } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { systemDomains } from "@/components/home/SystemsSection";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,6 @@ import UnifiedIntelligenceDashboard from "@/components/dashboard/UnifiedIntellig
 import { OperationModeInput } from "@/components/dashboard/OperationModeInput";
 import { OperationStateIndicator, OpState } from "@/components/dashboard/OperationStateIndicator";
 import { HumanObservationCard } from "@/components/dashboard/HumanObservationCard";
-import { Check, Play, Settings, Clock, Settings2, Wrench, Pause, Activity } from "lucide-react";
 
 interface PredictionResult {
   rul: number;
@@ -295,76 +294,6 @@ export default function SystemPage() {
                   )}
                 </Button>
 
-                {/* Simulation Tools for Hackathon */}
-                <div className="mt-8 pt-6 border-t border-border/50">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Settings className="w-3.5 h-3.5 text-muted-foreground" />
-                    <span className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Hackathon Demo Tools</span>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {[
-                      { id: "continuous", label: "Continuous", icon: Play },
-                      { id: "shift", label: "Shift", icon: Clock },
-                      { id: "intermittent", label: "Intermittent", icon: Zap },
-                      { id: "manual", label: "Manual", icon: Settings2 },
-                    ].map((mode) => (
-                      <button
-                        key={mode.id}
-                        id={`btn-sim-mode-${mode.id}`}
-                        onClick={() => setOperationMode(mode.id)}
-                        className={`flex flex-col items-center justify-center p-2 rounded-lg border transition-all duration-300 ${operationMode === mode.id
-                          ? "bg-primary/20 border-primary text-primary shadow-[0_0_15px_rgba(139,75,255,0.2)]"
-                          : "bg-background/20 border-border/40 text-muted-foreground hover:border-border hover:bg-background/40"
-                          }`}
-                      >
-                        <mode.icon className="w-4 h-4 mb-1" />
-                        <span className="text-[10px] font-medium">{mode.label}</span>
-                        {operationMode === mode.id && (
-                          <motion.div layoutId="active-tick" className="absolute top-1 right-1">
-                            <Check className="w-2 h-2" />
-                          </motion.div>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* State Simulation Tools */}
-                <div className="mt-4 pt-4 border-t border-border/30">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Activity className="w-3.5 h-3.5 text-muted-foreground" />
-                    <span className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">State Simulation</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      id="dev-force-running"
-                      size="sm"
-                      variant="outline"
-                      className={`flex-1 h-8 text-[10px] gap-1.5 ${opState === 'RUNNING' ? 'bg-cyan-500/10 border-cyan-500/50 text-cyan-500' : ''}`}
-                      onClick={() => changeOpState("RUNNING", "Manual override: Start cycle")}
-                    >
-                      <Play className="w-3 h-3" /> Running
-                    </Button>
-                    <Button
-                      id="dev-force-idle"
-                      size="sm"
-                      variant="outline"
-                      className={`flex-1 h-8 text-[10px] gap-1.5 ${opState === 'IDLE' ? 'bg-muted border-muted-foreground/50 text-muted-foreground' : ''}`}
-                      onClick={() => changeOpState("IDLE", "Manual override: Pause cycle")}
-                    >
-                      <Pause className="w-3 h-3" /> Idle
-                    </Button>
-                    <Button
-                      id="dev-force-maint"
-                      size="sm"
-                      variant="outline"
-                      className={`flex-1 h-8 text-[10px] gap-1.5 ${opState === 'MAINTENANCE' ? 'bg-amber-500/10 border-amber-500/50 text-amber-500' : ''}`}
-                      onClick={() => changeOpState("MAINTENANCE", "Manual override: Maintenance mode")}
-                    >
-                      <Wrench className="w-3 h-3" /> Maint
-                    </Button>
-                  </div>
-                </div>
               </CardContent>
             </Card>
           </div>

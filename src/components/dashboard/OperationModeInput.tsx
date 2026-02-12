@@ -91,7 +91,6 @@ export const OperationModeInput: React.FC<OperationModeInputProps> = ({
                         <SelectItem value="continuous">Continuous</SelectItem>
                         <SelectItem value="shift">Shift-Based</SelectItem>
                         <SelectItem value="intermittent">Intermittent</SelectItem>
-                        <SelectItem value="manual">Manual</SelectItem>
                     </SelectContent>
                 </Select>
 
