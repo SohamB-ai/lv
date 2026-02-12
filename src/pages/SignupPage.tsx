@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Link } from "react-router-dom";
 
 import { ConnectionLoader } from "@/components/auth/ConnectionLoader";
 
@@ -15,6 +17,7 @@ export default function SignupPage() {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [isConnecting, setIsConnecting] = useState(false);
+    const [termsAccepted, setTermsAccepted] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -33,6 +36,11 @@ export default function SignupPage() {
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!termsAccepted) {
+            toast.error("Please accept the Privacy Policy and Terms and Conditions.");
+            return;
+        }
 
         if (formData.password !== formData.confirmPassword) {
             toast.error("Passwords do not match");
@@ -109,6 +117,26 @@ export default function SignupPage() {
                             value={formData.confirmPassword}
                             onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                         />
+                    </div>
+                    <div className="flex items-center space-x-2 pt-2">
+                        <Checkbox
+                            id="terms-signup"
+                            checked={termsAccepted}
+                            onCheckedChange={(checked) => setTermsAccepted(!!checked)}
+                        />
+                        <label
+                            htmlFor="terms-signup"
+                            className="text-[12px] font-medium leading-none text-muted-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                            I agree to the{" "}
+                            <Link to="/legal" className="text-primary hover:underline">
+                                Privacy Policy
+                            </Link>{" "}
+                            and{" "}
+                            <Link to="/legal" className="text-primary hover:underline">
+                                Terms and Conditions
+                            </Link>
+                        </label>
                     </div>
                     <Button
                         type="submit"

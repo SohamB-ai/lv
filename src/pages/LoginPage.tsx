@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Link } from "react-router-dom";
 
 import { ConnectionLoader } from "@/components/auth/ConnectionLoader";
 
@@ -18,6 +20,7 @@ export default function LoginPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [isConnecting, setIsConnecting] = useState(false);
     const [formData, setFormData] = useState({ email: "", password: "" });
+    const [termsAccepted, setTermsAccepted] = useState(false);
 
     const handleGoogleSignIn = async () => {
         try {
@@ -30,6 +33,10 @@ export default function LoginPage() {
 
     const handleSignIn = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!termsAccepted) {
+            toast.error("Please accept the Privacy Policy and Terms and Conditions.");
+            return;
+        }
         setIsLoading(true);
         try {
             await login(formData.email, formData.password);
@@ -82,6 +89,26 @@ export default function LoginPage() {
                             value={formData.password}
                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                         />
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                            id="terms"
+                            checked={termsAccepted}
+                            onCheckedChange={(checked) => setTermsAccepted(!!checked)}
+                        />
+                        <label
+                            htmlFor="terms"
+                            className="text-[12px] font-medium leading-none text-muted-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                            I agree to the{" "}
+                            <Link to="/legal" className="text-primary hover:underline">
+                                Privacy Policy
+                            </Link>{" "}
+                            and{" "}
+                            <Link to="/legal" className="text-primary hover:underline">
+                                Terms and Conditions
+                            </Link>
+                        </label>
                     </div>
                     <Button
                         type="submit"
