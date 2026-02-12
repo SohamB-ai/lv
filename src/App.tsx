@@ -15,6 +15,7 @@ import SystemPage from "./pages/SystemPage";
 import Dashboard from "./pages/Dashboard";
 import ChatbotPage from "./pages/ChatbotPage";
 import OutputPreview from "./pages/OutputPreview";
+import FutureScalability from "./pages/FutureScalability";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
@@ -73,6 +74,7 @@ function AppRoutes() {
         <Route path="/system/:slug/prediction" element={<ProtectedRoute><SystemResultPage /></ProtectedRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/output-preview" element={<ProtectedRoute><OutputPreview /></ProtectedRoute>} />
+        <Route path="/future-scalability" element={<ProtectedRoute><FutureScalability /></ProtectedRoute>} />
         <Route path="/chatbot" element={<ProtectedRoute><ChatbotPage /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
         <Route path="/god-mode" element={<ProtectedRoute><GodMode /></ProtectedRoute>} />

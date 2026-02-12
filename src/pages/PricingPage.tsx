@@ -10,7 +10,7 @@ const DEMO_PLANS: PricingPlan[] = [
         features: ["can access both roles - viewer and engineer", "3 Devices", "5 Past History", "5GB Data History Storage", "Basic Support"],
         description: "Perfect for individuals and small projects",
         buttonText: "Get Started",
-        href: "/sign-up",
+        href: "/future-scalability",
         isPopular: false,
     },
     {
@@ -21,7 +21,7 @@ const DEMO_PLANS: PricingPlan[] = [
         features: ["can access both roles - viewer and engineer", "5 Devices", "10 Past History", "15GB Data History Storage", "Special Support"],
         description: "Ideal for growing teams",
         buttonText: "Upgrade to Pro",
-        href: "/sign-up",
+        href: "/future-scalability",
         isPopular: true,
     },
     {
@@ -32,7 +32,7 @@ const DEMO_PLANS: PricingPlan[] = [
         features: ["can access both roles - viewer and engineer", "Unlimited Devices", "Unlimited Past History", "Unlimited Data Storage", "Special Support"],
         description: "For large organizations",
         buttonText: "Contact Sales",
-        href: "/contact",
+        href: "/future-scalability",
         isPopular: false,
     }
 ];
